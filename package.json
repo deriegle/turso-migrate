@@ -1,0 +1,35 @@
+{
+  "name": "turso-migrations",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.cts",
+  "exports": {
+    "require": {
+      "types": "./dist/index.d.cts",
+      "default": "./dist/index.cjs"
+    },
+    "import": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "build": "pkgroll",
+    "dev": "pkgroll --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "@libsql/client": "0.5.x"
+  },
+  "devDependencies": {
+    "@libsql/client": "0.5.6",
+    "chalk": "5.3.0",
+    "commander": "12.0.0",
+    "enquirer": "2.4.1",
+    "typescript": "5.4.4"
+  }
+}
