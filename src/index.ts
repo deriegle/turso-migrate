@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { createHash } from "crypto";
 import { Table } from "console-table-printer";
 import { stat, readdir, readFile } from "fs/promises";
 import { join } from "path";
@@ -16,22 +17,25 @@ type MigrationStatus = (typeof migrationStatuses)[number];
 
 type Migration = {
   name: string;
-  path: string;
   status: MigrationStatus;
+  fileContents: string;
+  path: string;
+  sha: string;
   error?: string;
 };
 
 async function createPendingMigration({
   client,
-  migrationName,
+  migration,
 }: {
   client: LibSQLClient;
-  migrationName: string;
+  migration: Migration;
 }) {
   if (!(await hasMigrationsTable(client))) {
     await client.executeMultiple(`
       CREATE TABLE ${MIGRATIONS_TABLE} (
         name TEXT NOT NULL,
+        sha TEXT NOT NULL,
         status TEXT NOT NULL,
         error TEXT,
         created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -42,7 +46,7 @@ async function createPendingMigration({
   }
 
   await client.execute(`
-    INSERT INTO ${MIGRATIONS_TABLE} (name, status) VALUES ('${migrationName}', 'pending');
+    INSERT INTO ${MIGRATIONS_TABLE} (name, sha, status) VALUES ('${migration.name}', '${migration.sha}', 'pending');
   `);
 }
 
@@ -67,22 +71,39 @@ async function getMigrations({
     return files;
   }
 
+  const migrations: Omit<Migration, "error" | "status">[] = [];
+
+  for (const file of files.value) {
+    let fileContents: string;
+
+    try {
+      fileContents = await readFile(join(file.path, "up.sql"), "utf-8");
+    } catch (error) {
+      return Result.failure(
+        `Failed to read migration file for migration ${file.name}`
+      );
+    }
+
+    const sha = createHash("sha256").update(fileContents).digest("base64");
+
+    migrations.push({
+      fileContents,
+      name: file.name,
+      path: file.path,
+      sha,
+    });
+  }
+
   if (!(await hasMigrationsTable(client))) {
-    return Result.ok(
-      files.value.map((file) => ({
-        name: file.name,
-        path: file.path,
-        status: "pending",
-      }))
-    );
+    return Result.ok(migrations.map((m) => ({ ...m, status: "pending" })));
   }
 
   const result = await client.execute(
-    `SELECT name, error, status FROM ${MIGRATIONS_TABLE};`
+    `SELECT name, error, sha, status FROM ${MIGRATIONS_TABLE};`
   );
 
   const missingMigrations = result.rows.filter(
-    (migration) => !files.value.find((file) => file.name === migration.name)
+    (row) => !files.value.find((file) => file.name === row.name)
   );
 
   if (missingMigrations.length) {
@@ -93,18 +114,34 @@ async function getMigrations({
     );
   }
 
+  const incorrectShas = result.rows.filter((row) => {
+    const migration = migrations.find((m) => m.name === row.name);
+    return migration!.sha !== row.sha;
+  });
+
+  if (incorrectShas.length) {
+    return Result.failure(
+      `Some migrations have been modified since they were ran. Please fix them first.\n\n${incorrectShas
+        .map((r) => r.name)
+        .join("\n")}`
+    );
+  }
+
   return Result.ok(
-    files.value.map((file) => {
-      const migration = result.rows.find((row) => row.name === file.name);
+    migrations.map((migration) => {
+      const migrationRow = result.rows.find(
+        (row) => row.name === migration.name
+      );
 
       return {
-        name: file.name,
-        path: file.path,
-        status: migrationStatuses.includes(migration?.status as any)
-          ? (migration!.status as MigrationStatus)
+        ...migration,
+        status: migrationStatuses.includes(migrationRow?.status as any)
+          ? (migrationRow!.status as MigrationStatus)
           : "pending",
         error:
-          typeof migration?.error === "string" ? migration.error : undefined,
+          typeof migrationRow?.error === "string"
+            ? migrationRow.error
+            : undefined,
       };
     })
   );
@@ -238,7 +275,7 @@ program
 
     await createPendingMigration({
       client,
-      migrationName: firstPendingMigration.name,
+      migration: firstPendingMigration,
     });
 
     try {
