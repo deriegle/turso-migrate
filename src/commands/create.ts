@@ -4,8 +4,10 @@ import { join } from "path";
 import { faker } from "@faker-js/faker";
 
 export const handleCreateCommand = async ({
+  name,
   schemaFolder,
 }: {
+  name?: string;
   schemaFolder: string;
 }) => {
   try {
@@ -23,12 +25,19 @@ export const handleCreateCommand = async ({
     console.error(chalk.red(`Could not find directory ${schemaFolder}`));
   }
 
-  const migrationName = [
-    Date.now(),
-    faker.word.adjective(),
-    faker.word.noun(),
-    faker.word.verb(),
-  ]
+  const migrationNameParts = [Date.now().toString()];
+
+  if (name) {
+    migrationNameParts.push(name);
+  } else {
+    migrationNameParts.push(
+      faker.word.adjective(),
+      faker.word.noun(),
+      faker.word.verb()
+    );
+  }
+
+  const migrationName = migrationNameParts
     .join("_")
     .replace("-", "_")
     .toLowerCase();

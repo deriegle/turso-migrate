@@ -14,7 +14,13 @@ program
   .command("create")
   .description("Create a new migration file")
   .requiredOption("-s, --schemaFolder <schema>", "Path to schema folder")
-  .action(handleCreateCommand);
+  .argument("[name]", "Name of the migration file")
+  .action((name, options) =>
+    handleCreateCommand({
+      name,
+      schemaFolder: options.schemaFolder,
+    })
+  );
 
 program
   .command("migrate")
