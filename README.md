@@ -75,10 +75,10 @@ Options:
 
 ### Help Command
 
-```bin
-$ npx @deriegle/turso-migrate
+Command to print our help for available commands.
 
-Usage: turso-migrate [options] [command]
+```bin
+Usage: @deriegle/turso-migrate [options] [command]
 
 CLI tool to make migrations in Turso easier.
 
@@ -88,8 +88,9 @@ Options:
 
 Commands:
   create [options] [name]  Create a new migration file
-  migrate [options]        Migrate the database
-  resolve [options]        Updates a migration file status
+  migrate [options]        Migrates the database
+  resolve [options]        Updates a migration file status. This can be useful to mark a migration as complete manually or pending if you want to
+                           run it again.
   status [options]         Shows the status of migrations
   help [command]           display help for command
 ```
