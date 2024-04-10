@@ -1,9 +1,9 @@
 import { program } from "commander";
 import { version } from "../package.json";
 import { handleStatusCommand } from "./commands/status";
-import { handleRetryCommand } from "./commands/retry";
 import { handleMigrateCommand } from "./commands/migrate";
 import { handleCreateCommand } from "./commands/create";
+import { handleResolveCommand } from "./commands/resolve";
 
 program
   .name("turso-migrate")
@@ -34,15 +34,18 @@ program
   .action(handleMigrateCommand);
 
 program
-  .command("retry")
-  .description("Retry last errored migration")
+  .command("resolve")
+  .description("Updates a migration file status")
   .requiredOption("-d, --databaseUrl <databaseUrl>", "Turso Database URL")
   .requiredOption(
     "-a, --databaseAuthToken <authToken>",
     "Turso Database Auth Token"
   )
-  .requiredOption("-s, --schemaFolder <schema>", "Path to schema to migrate")
-  .action(handleRetryCommand);
+  .requiredOption("-s, --schemaFolder <schema>", "Path to schema folder")
+  .option("--completed <migrationName>", "Migration to mark as completed")
+  .option("--pending <migrationName>", "Migration to mark as pending")
+  .argument("[name]", "Name of the migration file")
+  .action(handleResolveCommand);
 
 program
   .command("status")

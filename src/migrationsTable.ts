@@ -26,7 +26,24 @@ async function createPendingMigration({
   }
 
   await client.execute(`
-    INSERT INTO ${MIGRATIONS_TABLE} (name, sha, status) VALUES ('${migration.name}', '${migration.sha}', 'pending');
+    INSERT INTO ${MIGRATIONS_TABLE} (name, sha, status)
+    VALUES ('${migration.name}', '${migration.sha}', 'pending');
+  `);
+}
+
+export async function updateMigrationStatus({
+  client,
+  migration,
+  updatedStatus,
+}: {
+  client: LibSQLClient;
+  migration: Migration;
+  updatedStatus: MigrationStatus;
+}) {
+  await client.execute(`
+    UPDATE ${MIGRATIONS_TABLE}
+    SET status = '${updatedStatus}', error = NULL
+    WHERE name = '${migration.name}';
   `);
 }
 
@@ -40,7 +57,9 @@ async function markMigrationErrored({
   error: string;
 }) {
   await client.execute(`
-    UPDATE ${MIGRATIONS_TABLE} SET status = 'errored', error = '${error}' WHERE name = '${migration.name}';
+    UPDATE ${MIGRATIONS_TABLE}
+    SET status = 'errored', error = '${error}'
+    WHERE name = '${migration.name}';
   `);
 }
 
@@ -52,7 +71,9 @@ async function markMigrationCompleted({
   migration: Migration;
 }) {
   await client.execute(`
-    UPDATE ${MIGRATIONS_TABLE} SET status = 'completed' WHERE name = '${migration.name}';
+    UPDATE ${MIGRATIONS_TABLE}
+    SET status = 'completed'
+    WHERE name = '${migration.name}';
   `);
 }
 
@@ -90,9 +111,11 @@ export async function executeMigration({
 export async function hasMigrationsTable(
   client: LibSQLClient
 ): Promise<boolean> {
-  const result = await client.execute(
-    `SELECT name FROM sqlite_master where type='table'`
-  );
+  const result = await client.execute(`
+    SELECT name
+    FROM sqlite_master
+    WHERE type='table'
+  `);
 
   return result.rows.some((row) => row.name === MIGRATIONS_TABLE);
 }
@@ -108,9 +131,10 @@ type MigrationRow = {
 export async function getMigrationRows(
   client: LibSQLClient
 ): Promise<MigrationRow[]> {
-  const result = await client.execute(
-    `SELECT name, error, sha, status FROM ${MIGRATIONS_TABLE};`
-  );
+  const result = await client.execute(`
+    SELECT name, error, sha, status
+    FROM ${MIGRATIONS_TABLE};
+  `);
 
   return result.rows.filter((row): row is MigrationRow => true);
 }
