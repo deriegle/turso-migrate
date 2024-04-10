@@ -60,4 +60,14 @@ export const handleResolveCommand = async ({
     migration,
     updatedStatus,
   });
+
+  console.log(
+    chalk.green(
+      `Migration ${chalk.bold(migrationName)} marked as ${
+        updatedStatus === "completed"
+          ? chalk.green(updatedStatus)
+          : chalk.yellow("pending")
+      }`
+    )
+  );
 };

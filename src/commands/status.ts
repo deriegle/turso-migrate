@@ -29,7 +29,7 @@ export const handleStatusCommand = async (options: {
 
   const table = new Table({
     columns: [
-      { name: "name", alignment: "center", title: "Name" },
+      { name: "name", alignment: "left", title: "Name" },
       { name: "status", alignment: "center", title: "Status" },
       { name: "error", alignment: "center", title: "Error" },
     ],

@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { program } from "commander";
 import { version } from "../package.json";
 import { handleStatusCommand } from "./commands/status";
@@ -44,7 +45,6 @@ program
   .requiredOption("-s, --schemaFolder <schema>", "Path to schema folder")
   .option("--completed <migrationName>", "Migration to mark as completed")
   .option("--pending <migrationName>", "Migration to mark as pending")
-  .argument("[name]", "Name of the migration file")
   .action(handleResolveCommand);
 
 program
@@ -59,3 +59,11 @@ program
   .action(handleStatusCommand);
 
 void program.parseAsync(process.argv);
+
+process.addListener("unhandledRejection", (error) => {
+  console.error(chalk.red(`Encountered an error: ${error}`));
+});
+
+process.addListener("uncaughtException", (error) => {
+  console.error(chalk.red(`Encountered an error: ${error}`));
+});
