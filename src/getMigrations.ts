@@ -4,7 +4,11 @@ import { join } from "path";
 import { Client as LibSQLClient } from "@libsql/client";
 import { Result } from "./result";
 import { Migration } from "./migration";
-import { getMigrationRows, hasMigrationsTable } from "./migrationsTable";
+import {
+  MIGRATION_FILE_NAME,
+  getMigrationRows,
+  hasMigrationsTable,
+} from "./migrationsTable";
 
 async function getMigrationFiles(
   schemaFolder: string
@@ -50,7 +54,10 @@ export async function getMigrations({
     let fileContents: string;
 
     try {
-      fileContents = await readFile(join(file.path, "up.sql"), "utf-8");
+      fileContents = await readFile(
+        join(file.path, MIGRATION_FILE_NAME),
+        "utf-8"
+      );
     } catch (error) {
       return Result.failure(
         `Failed to read migration file for migration ${file.name}`

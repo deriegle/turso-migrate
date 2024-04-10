@@ -3,6 +3,7 @@ import { Migration, MigrationStatus } from "./migration";
 import chalk from "chalk";
 
 const MIGRATIONS_TABLE = "__turso_migrations";
+export const MIGRATION_FILE_NAME = "migration.sql";
 
 async function createPendingMigration({
   client,

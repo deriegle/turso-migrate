@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { stat, mkdir, writeFile } from "fs/promises";
 import { join } from "path";
 import { faker } from "@faker-js/faker";
+import { MIGRATION_FILE_NAME } from "../migrationsTable";
 
 export const handleCreateCommand = async ({
   name,
@@ -43,7 +44,7 @@ export const handleCreateCommand = async ({
     .toLowerCase();
 
   const migrationFolderPath = join(schemaFolder, migrationName);
-  const migrationFilePath = join(migrationFolderPath, "up.sql");
+  const migrationFilePath = join(migrationFolderPath, MIGRATION_FILE_NAME);
 
   await mkdir(migrationFolderPath);
   await writeFile(migrationFilePath, "-- Enter your migration here.", "utf-8");

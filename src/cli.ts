@@ -2,14 +2,14 @@
 
 import chalk from "chalk";
 import { program } from "commander";
-import { version } from "../package.json";
+import { name, version } from "../package.json";
 import { handleStatusCommand } from "./commands/status";
 import { handleMigrateCommand } from "./commands/migrate";
 import { handleCreateCommand } from "./commands/create";
 import { handleResolveCommand } from "./commands/resolve";
 
 program
-  .name("turso-migrate")
+  .name(name)
   .description("CLI tool to make migrations in Turso easier.")
   .version(version);
 
@@ -27,7 +27,7 @@ program
 
 program
   .command("migrate")
-  .description("Migrate the database")
+  .description("Migrates the database")
   .requiredOption("-d, --databaseUrl <databaseUrl>", "Turso Database URL")
   .requiredOption(
     "-a, --databaseAuthToken <authToken>",
@@ -38,7 +38,9 @@ program
 
 program
   .command("resolve")
-  .description("Updates a migration file status")
+  .description(
+    "Updates a migration file status. This can be useful to mark a migration as complete manually or pending if you want to run it again."
+  )
   .requiredOption("-d, --databaseUrl <databaseUrl>", "Turso Database URL")
   .requiredOption(
     "-a, --databaseAuthToken <authToken>",
