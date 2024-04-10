@@ -11,19 +11,19 @@ import {
 } from "./migrationsTable";
 
 async function getMigrationFiles(
-  schemaFolder: string
+  migrationsFolder: string
 ): Promise<Result<Array<{ name: string; path: string }>>> {
   try {
-    const stats = await stat(schemaFolder);
+    const stats = await stat(migrationsFolder);
 
     if (!stats.isDirectory()) {
-      return Result.failure(`${schemaFolder} is not a directory.`);
+      return Result.failure(`${migrationsFolder} is not a directory.`);
     }
   } catch (error) {
-    Result.failure(`Failed to verify ${schemaFolder}`);
+    Result.failure(`Failed to verify ${migrationsFolder}`);
   }
 
-  const folderContents = await readdir(schemaFolder, {
+  const folderContents = await readdir(migrationsFolder, {
     withFileTypes: true,
   });
 
@@ -37,12 +37,12 @@ async function getMigrationFiles(
 
 export async function getMigrations({
   client,
-  schemaFolder,
+  migrationsFolder,
 }: {
   client: LibSQLClient;
-  schemaFolder: string;
+  migrationsFolder: string;
 }): Promise<Result<Migration[]>> {
-  const files = await getMigrationFiles(schemaFolder);
+  const files = await getMigrationFiles(migrationsFolder);
 
   if (!files.success) {
     return files;
@@ -86,7 +86,7 @@ export async function getMigrations({
 
   if (missingMigrations.length) {
     return Result.failure(
-      `Some migrations have been ran but are missing from the schema folder:\n\n${missingMigrations
+      `Some migrations have been ran but are missing from the migrations folder:\n\n${missingMigrations
         .map((m) => m.name)
         .join("\n")}`
     );

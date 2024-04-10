@@ -16,12 +16,12 @@ program
 program
   .command("create")
   .description("Create a new migration file")
-  .requiredOption("-s, --schemaFolder <schema>", "Path to schema folder")
+  .requiredOption("-f, --migrationsFolder <path>", "Path to migrations folder")
   .argument("[name]", "Name of the migration file")
   .action((name, options) =>
     handleCreateCommand({
       name,
-      schemaFolder: options.schemaFolder,
+      migrationsFolder: options.migrationsFolder,
     })
   );
 
@@ -29,11 +29,8 @@ program
   .command("migrate")
   .description("Migrates the database")
   .requiredOption("-d, --databaseUrl <databaseUrl>", "Turso Database URL")
-  .requiredOption(
-    "-a, --databaseAuthToken <authToken>",
-    "Turso Database Auth Token"
-  )
-  .requiredOption("-s, --schemaFolder <schema>", "Path to schema to migrate")
+  .requiredOption("-a, --databaseAuthToken <token>", "Turso DB Auth Token")
+  .requiredOption("-f, --migrationsFolder <path>", "Path to migrations folder")
   .action(handleMigrateCommand);
 
 program
@@ -42,11 +39,8 @@ program
     "Updates a migration file status. This can be useful to mark a migration as complete manually or pending if you want to run it again."
   )
   .requiredOption("-d, --databaseUrl <databaseUrl>", "Turso Database URL")
-  .requiredOption(
-    "-a, --databaseAuthToken <authToken>",
-    "Turso Database Auth Token"
-  )
-  .requiredOption("-s, --schemaFolder <schema>", "Path to schema folder")
+  .requiredOption("-a, --databaseAuthToken <token>", "Turso DB Auth Token")
+  .requiredOption("-f, --migrationsFolder <path>", "Path to migrations folder")
   .option("--completed <migrationName>", "Migration to mark as completed")
   .option("--pending <migrationName>", "Migration to mark as pending")
   .action(handleResolveCommand);
@@ -55,11 +49,8 @@ program
   .command("status")
   .description("Shows the status of migrations")
   .requiredOption("-d, --databaseUrl <databaseUrl>", "Turso Database URL")
-  .requiredOption(
-    "-a, --databaseAuthToken <authToken>",
-    "Turso Database Auth Token"
-  )
-  .requiredOption("-s, --schemaFolder <schema>", "Path to schema to migrate")
+  .requiredOption("-a, --databaseAuthToken <token>", "Turso DB Auth Token")
+  .requiredOption("-f, --migrationsFolder <path>", "Path to migrations folder")
   .action(handleStatusCommand);
 
 void program.parseAsync(process.argv);

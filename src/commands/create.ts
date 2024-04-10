@@ -6,24 +6,24 @@ import { MIGRATION_FILE_NAME } from "../migrationsTable";
 
 export const handleCreateCommand = async ({
   name,
-  schemaFolder,
+  migrationsFolder,
 }: {
   name?: string;
-  schemaFolder: string;
+  migrationsFolder: string;
 }) => {
   try {
-    const stats = await stat(schemaFolder);
+    const stats = await stat(migrationsFolder);
 
     if (!stats.isDirectory()) {
       console.error(
         chalk.red(
-          `${schemaFolder} is not a directory and cannot be used for creating migrations.`
+          `${migrationsFolder} is not a directory and cannot be used for creating migrations.`
         )
       );
       return;
     }
   } catch (error) {
-    console.error(chalk.red(`Could not find directory ${schemaFolder}`));
+    console.error(chalk.red(`Could not find directory ${migrationsFolder}`));
   }
 
   const migrationNameParts = [Date.now().toString()];
@@ -43,7 +43,7 @@ export const handleCreateCommand = async ({
     .replace("-", "_")
     .toLowerCase();
 
-  const migrationFolderPath = join(schemaFolder, migrationName);
+  const migrationFolderPath = join(migrationsFolder, migrationName);
   const migrationFilePath = join(migrationFolderPath, MIGRATION_FILE_NAME);
 
   await mkdir(migrationFolderPath);

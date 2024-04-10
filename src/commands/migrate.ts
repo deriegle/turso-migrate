@@ -7,7 +7,7 @@ import { prompt } from "enquirer";
 export async function handleMigrateCommand(options: {
   databaseUrl: string;
   databaseAuthToken: string;
-  schemaFolder: string;
+  migrationsFolder: string;
 }): Promise<void> {
   const clientResult = await getClient(options);
 
@@ -20,7 +20,7 @@ export async function handleMigrateCommand(options: {
 
   const migrationsResult = await getMigrations({
     client,
-    schemaFolder: options.schemaFolder,
+    migrationsFolder: options.migrationsFolder,
   });
 
   if (!migrationsResult.success) {

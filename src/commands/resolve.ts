@@ -7,7 +7,7 @@ import { updateMigrationStatus } from "../migrationsTable";
 type SharedOptions<Options> = Options & {
   databaseAuthToken: string;
   databaseUrl: string;
-  schemaFolder: string;
+  migrationsFolder: string;
 };
 
 export const handleResolveCommand = async ({
@@ -15,7 +15,7 @@ export const handleResolveCommand = async ({
   databaseAuthToken,
   databaseUrl,
   pending,
-  schemaFolder,
+  migrationsFolder,
 }:
   | SharedOptions<{ completed: string; pending?: string }>
   | SharedOptions<{ completed?: string; pending: string }>) => {
@@ -36,7 +36,7 @@ export const handleResolveCommand = async ({
 
   const client = clientResult.value;
 
-  const migrationsResult = await getMigrations({ client, schemaFolder });
+  const migrationsResult = await getMigrations({ client, migrationsFolder });
 
   if (!migrationsResult.success) {
     console.log(chalk.red(migrationsResult.error));

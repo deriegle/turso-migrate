@@ -3,12 +3,16 @@ import { getClient } from "../turso";
 import { getMigrations } from "../getMigrations";
 import { Table } from "console-table-printer";
 
-export const handleStatusCommand = async (options: {
+export const handleStatusCommand = async ({
+  databaseAuthToken,
+  databaseUrl,
+  migrationsFolder,
+}: {
   databaseUrl: string;
   databaseAuthToken: string;
-  schemaFolder: string;
+  migrationsFolder: string;
 }) => {
-  const clientResult = await getClient(options);
+  const clientResult = await getClient({ databaseAuthToken, databaseUrl });
 
   if (!clientResult.success) {
     console.log(chalk.red(clientResult.error));
@@ -17,10 +21,7 @@ export const handleStatusCommand = async (options: {
 
   const client = clientResult.value;
 
-  const migrationsResult = await getMigrations({
-    client,
-    schemaFolder: options.schemaFolder,
-  });
+  const migrationsResult = await getMigrations({ client, migrationsFolder });
 
   if (!migrationsResult.success) {
     console.log(chalk.red(migrationsResult.error));

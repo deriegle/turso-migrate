@@ -8,7 +8,7 @@ This is a CLI tool to easy and quickly run SQL migrations against Turso in a pre
 
 ### Create
 
-This command will create a new migration file in schema folder you specify. You can provide an optional name if you'd like to name the migration file. It will be prefixed with the current unix timestamp. If no name is provided, a random name will be generated.
+This command will create a new migration file in the migrations folder you specify. You can provide an optional name if you'd like to name the migration file. It will be prefixed with the current unix timestamp. If no name is provided, a random name will be generated.
 
 ```bin
 Usage: @deriegle/turso-migrate create [options] [name]
@@ -19,13 +19,13 @@ Arguments:
   name                         Name of the migration file
 
 Options:
-  -s, --schemaFolder <schema>  Path to schema folder
+  -f, --migrationsFolder <path>  Path to migrations folder
   -h, --help                   display help for command
 ```
 
 ### Migrate Command
 
-This command will create a new migration file in schema folder you specify. You can provide an optional name if you'd like to name the migration file. It will be prefixed with the current unix timestamp. If no name is provided, a random name will be generated.
+This command will create a new migration file in the migrations folder you specify. You can provide an optional name if you'd like to name the migration file. It will be prefixed with the current unix timestamp. If no name is provided, a random name will be generated.
 
 ```bin
 Usage: @deriegle/turso-migrate migrate [options]
@@ -35,7 +35,7 @@ Migrates the database
 Options:
   -d, --databaseUrl <databaseUrl>      Turso Database URL
   -a, --databaseAuthToken <authToken>  Turso Database Auth Token
-  -s, --schemaFolder <schema>          Path to schema to migrate
+  -f, --migrationsFolder <path>  Path to migrations folder
   -h, --help                           display help for command
 ```
 
@@ -51,7 +51,7 @@ Updates a migration file status. This can be useful to mark a migration as compl
 Options:
   -d, --databaseUrl <databaseUrl>      Turso Database URL
   -a, --databaseAuthToken <authToken>  Turso Database Auth Token
-  -s, --schemaFolder <schema>          Path to schema folder
+  -f, --migrationsFolder <path>  Path to migrations folder
   --completed <migrationName>          Migration to mark as completed
   --pending <migrationName>            Migration to mark as pending
   -h, --help                           display help for command
@@ -69,7 +69,7 @@ Shows the status of migrations
 Options:
   -d, --databaseUrl <databaseUrl>      Turso Database URL
   -a, --databaseAuthToken <authToken>  Turso Database Auth Token
-  -s, --schemaFolder <schema>          Path to schema to migrate
+  -f, --migrationsFolder <path>  Path to migrations folder
   -h, --help                           display help for command
 ```
 
