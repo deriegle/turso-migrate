@@ -1,11 +1,14 @@
 {
-  "name": "turso-migrate",
-  "version": "0.0.1",
+  "name": "@deriegle/turso-migrate",
+  "version": "0.0.2",
   "description": "",
-  "bin": "./dist/cli.cjs",
+  "bin": {
+    "turso-migrate": "./dist/cli.cjs"
+  },
   "scripts": {
     "build": "pkgroll",
-    "dev": "pkgroll --watch"
+    "dev": "pkgroll --watch",
+    "local-link": "npm run build && npm"
   },
   "keywords": [],
   "author": "",
